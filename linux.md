@@ -54,7 +54,7 @@ chown:改变文件归属   sudo chown root:root test.sh      sudo chmod ubantu:u
 
 ps aux:一次性列出所有正在执行的系统的图片  ps aux | grep sleep
 
-top: 实时动态查看进程 P：cpu占用     M：内存占用      
+top: 实时动态查看进程 P：cpu占用     M：内存占用      q:退出
 
 kill:根据PID，停止程序    获取PID：ps aux | grep sleep
 
