@@ -46,7 +46,7 @@ source ~/.bashrc:     ~/.bashrc 就是一个备忘录   新终端会自动读取
 需要sorce ~/.bashrc(重新读一遍备忘录)   ~/.bashrc内容才会生效
 
 
-alias:起别名  # 临时生效  alias arm='cd /home/robot/arm_ws'   想要永久生效 将 alias arm='cd /home/robot/arm_ws' 写入~/.bashrc
+alias:起别名  # 临时生效（仅限一个终端）  alias arm='cd /home/robot/arm_ws'   想要永久生效 将 alias arm='cd /home/robot/arm_ws' 写入~/.bashrc（任何时候打开一个终端都可以用）  ~/.bashrc会永久保存
 在执行source~/.bashrc
 
  
