@@ -1,0 +1,55 @@
+1. cut：按分隔符截取文本（切片）
+cut -d''  -f1,3   train.log     -d'' 以空格为刀 （分隔符） 获取1,3列  在train.log文件中                      cut 的短板：     只能识别单个空格        不能识别多个空格  他会把空格单独看成一列    
+若列与列之间有多个空格  应用awk   他会自动把多个空格  合并为一个空格去识别
+
+2.awk 默认以空白（空格 / 多个空格 /tab）作为分隔符
+`$1` 第 1 列，`$2`第 2 列，`$3`第 3 列，`$0`整行                                       【课堂练习】打印日志第1、3列           awk '{print $1,$3}' train.log
+
+# 筛选准确率大于0.85的所有行
+awk '$3 > 0.85 {print $0}' train.log
+
+# 只打印准确率数值（去掉acc:）
+awk '{print substr($3,5)}' train.log      substr:字符串      $3,5 ：第三列  第五个字符开始打印（）      `acc:0.82` 逐个编号：1:a 2:c 3:c 4:: 5:0 6:. 7:8 8:2
+
+`substr($3,5)` → 从**第 5 个字符**开始，截取后面所有字符
+
+
+3. sed：流编辑器，批量替换字符串                                                                          预览修改(不会修改源文件):sed 's/acc/accuracy/g' train.log
+语法：`sed 's/原字符串/新字符串/g'`                          加-i修改源文件        ：          sed -i 's/acc/accuracy/g' train.log       (建议先预览在修改)   
+- `s`：替换动作                                                                                                              批量修改，修改文件夹下所有的.py里的内容：  sed -i 's/acc/accuracy/g' *.py
+- `g`：global，一行内全部替换，不加 g 只替换每行第一个匹配
+
+4. tr：字符转换 / 删除
+cat train.log | tr 'a-z' 'A-Z'   小写转大写
+cat train.log | tr -d ':'        删掉所有冒号
+
+5.管道传参  xargs   (把文本转为命令参数)  例子：  find . -name "*.log" | rm       传来一堆文本文件，rm不知道干啥
+                                            find . -name  "*.log" | xargs rm       自动加到rm后面   rm find . -name "*.log"
+                                            
+
+6.理解脚本概念：  
+> 终端交互模式：你输入**一条命令 → 回车执行 → 等待完成 → 再输入下一条**，人要守着敲。
+> Shell 脚本：提前把**所有命令写在一个文件里**，运行脚本时，bash 会自动读取文件，按从上到下顺序，一条接着一条执行，不用人手动敲。  （脚本里不光能写普通命令，还能写逻辑，循环，判断） （脚本也是用 bash 解释器跑的，和终端是同一个 “翻译官”）
+
+代码：
+#!/bin/bash                        （这一行不是注释   表示使用的是bash解释器）
+# run_train.sh 小明的训练启动脚本
+# 循环遍历3个学习率
+for lr in 1e-4 3e-4 1e-3; do      （依次把三个学习率值赋值给lr 开启三次循环）
+    # 创建日志目录，-p 目录不存在才创建，存在不会报错
+    mkdir -p logs/lr_$lr          （`$lr`：读取变量 lr 的值，自动替换       循环三次会依次创建： `logs/lr_1e-4`、`logs/lr_3e-4`、`logs/lr_1e-3`）
+    # 启动训练，传入当前循环的学习率lr，日志保存到对应文件夹
+    python train.py --lr $lr --logdir logs/lr_$lr
+done                               （do开始  done结束  一次循环）
+                                   
+                                   
+   给脚本增加权限  ：chmod +x run_train.sh
+   运行脚本   ：  ./ run_train.sh
+ 
+ 
+nohup ./run_train.sh > train_all.log 2>&1 &   (后台运行run_train.sh)
+- nohup：脱离终端后台运行
+- `> train_all.log`：所有输出写入日志文件
+
+
+
